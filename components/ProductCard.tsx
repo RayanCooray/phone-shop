@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 interface ProductCardProps {
   title: string;
@@ -15,7 +16,7 @@ const ProductCard: FC<ProductCardProps> = ({ id,title, price, image }) => {
     <Link href={`/product/${id}`}>
     <Card className="w-full sm:w-72 bg-black text-white border border-gray-800 shadow-lg">
       <CardContent className="p-4 flex flex-col items-center">
-        <img src={image} alt={title} className="w-48 h-48 object-contain" />
+        <Image src={image} alt={title} width={500} height={500} className="object-contain rounded-2xl" />
         <div className="flex items-center justify-between w-full mt-4">
           <span className="text-amber-400 font-medium">New</span>
           <span className="text-xs text-gray-400">🌟 4.8</span>
