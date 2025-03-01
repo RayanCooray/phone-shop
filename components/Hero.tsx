@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from './ui/button';
+import Link from 'next/link';
 
 
 const Hero = () => {
@@ -30,9 +31,11 @@ const Hero = () => {
         <p className="mt-4 text-lg md:text-xl text-gray-200">
           Explore the latest smartphones and accessories with cutting-edge features.
         </p>
+        <Link href='/products'>
         <Button className="mt-6 px-6 py-3 text-lg font-semibold bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] hover:from-[#4F46E5] hover:to-[#6366F1] transition shadow-lg rounded-lg">
           Shop Now
         </Button>
+        </Link>
       </div>
     </div>
   );
