@@ -46,9 +46,10 @@ export default function ProfileEditPage() {
     console.log("Profile Data:", data);
   };
 
-  const handleImageChange = (e: { target: { files: File[]; }; }) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
@@ -181,6 +182,7 @@ export default function ProfileEditPage() {
                   </FormItem>
                 )} />
               </div>
+
 
              
               <Button type="submit" className="mt-6 w-full bg-blue-600 hover:bg-blue-700">
