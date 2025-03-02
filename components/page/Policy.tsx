@@ -3,7 +3,7 @@ import React from "react";
 const Policy = () => {
   const A_FEATURES = [
     {
-      color: "bg-red-50",
+      color: "bg-red-200",
       name: "Free shipping",
       desc: "On orders over $50.00",
       svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,7 +19,7 @@ const Policy = () => {
       `,
     },
     {
-      color: "bg-sky-50",
+      color: "bg-sky-200",
       name: "Very easy to return",
       desc: "Just phone number.",
       svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,7 +35,7 @@ const Policy = () => {
       `,
     },
     {
-      color: "bg-green-50",
+      color: "bg-green-200",
       name: "Nationwide Delivery",
       desc: "Fast delivery nationwide.",
       svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +48,7 @@ const Policy = () => {
       `,
     },
     {
-      color: "bg-amber-50",
+      color: "bg-amber-200",
       name: "Refunds policy",
       desc: "60 days return for any reason",
       svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
