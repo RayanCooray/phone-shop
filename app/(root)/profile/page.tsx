@@ -42,17 +42,19 @@ export default function ProfileEditPage() {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: unknown) => {
     console.log("Profile Data:", data);
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: { target: { files: File[]; }; }) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
-        form.setValue("profileImage", reader.result);
+        if (typeof reader.result === "string") {
+          setProfileImage(reader.result);
+          form.setValue("profileImage", reader.result);
+        }
       };
       reader.readAsDataURL(file);
     }
