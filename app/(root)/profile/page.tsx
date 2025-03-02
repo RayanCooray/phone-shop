@@ -64,19 +64,21 @@ export default function ProfileEditPage() {
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">
      
-      <motion.div
-        className="w-2 md:w-1/4 bg-gray-900 text-white p-5 rounded-2xl shadow-lg"
-        initial={{ x: -50, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
-        <ul className="space-y-3">
-          <li className="hover:text-gray-400 cursor-pointer">Account</li>
-          <li className="hover:text-gray-400 cursor-pointer">Security</li>
-          <li className="hover:text-gray-400 cursor-pointer">Notifications</li>
-        </ul>
-      </motion.div>
+     <motion.div
+  className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-900 text-white p-5 rounded-2xl shadow-lg"
+  initial={{ x: -50, opacity: 0 }}
+  animate={{ x: 0, opacity: 1 }}
+  transition={{ duration: 0.5 }}
+>
+  <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
+  <ul className="space-y-3">
+    <li className="hover:text-gray-400 cursor-pointer">Account</li>
+    <li className="hover:text-gray-400 cursor-pointer">Security</li>
+    <li className="hover:text-gray-400 cursor-pointer">Notifications</li>
+  </ul>
+</motion.div>
+
+
 
       
       <Card className="w-full md:w-3/4 p-6 shadow-xl">
