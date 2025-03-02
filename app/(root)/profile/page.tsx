@@ -65,7 +65,7 @@ export default function ProfileEditPage() {
     <div className="flex flex-col md:flex-row gap-6 p-6">
      
       <motion.div
-        className="w-sm md:w-1/4 bg-gray-900 text-white p-5 rounded-2xl shadow-lg"
+        className="w-2 md:w-1/4 bg-gray-900 text-white p-5 rounded-2xl shadow-lg"
         initial={{ x: -50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
