@@ -24,8 +24,6 @@ const Header = ({ session }: { session: Session }) => {
 
   const logOutfrom = async () => {
     await signOut();
-    // const router = useRouter();
-    // router.push('/sign-in'); 
   };
   return (
     <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/80 dark:bg-[#0F172A]/80 border-b border-gray-200 dark:border-gray-700">

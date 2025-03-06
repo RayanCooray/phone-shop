@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -17,10 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useSession } from "next-auth/react";
+import { ProfileCreate } from "@/lib/actions/ProfileCreate";
+import { toast } from "sonner";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First Name must be at least 2 characters"),
   lastName: z.string().min(2, "Last Name must be at least 2 characters"),
+  email: z.string().email("Enter a valid email address"),
   contact: z.string().min(10, "Enter a valid contact number"),
   addressLine1: z.string().min(5, "Address must be at least 5 characters"),
   apartment: z.string().optional(),
@@ -31,15 +34,25 @@ const profileSchema = z.object({
 });
 
 const Page = () => {
-  const session = useSession();
+  const { data: session, status } = useSession();
+
+  //onload refresh
+  
+useEffect(() => {
   console.log(session)
+  console.log(status)
+  console.log(session?.user?.accessToken)
+}, [session, status]);
+
+  // console.log(session)
   const [profileImage, setProfileImage] = useState("");
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstName: session?.user?.name?.split(" ")[0] || "",
+      lastName: session?.user?.name?.split(" ")[1] || "",
+      email: session?.user?.email || "",
       contact: "",
       addressLine1: "",
       apartment: "",
@@ -50,9 +63,31 @@ const Page = () => {
     },
   });
 
+
   const onSubmit = (data: z.infer<typeof profileSchema>) => {
-    console.log("Profile Data:", data);
-  };
+    const token = session?.user?.accessToken;
+    
+    console.log("Session Object:", session);
+    console.log("Access Token:", token);
+
+    if (!token) {
+        console.error("No access token found!");
+        return;
+    }
+
+    ProfileCreate({
+      ...data,
+      accessToken: token
+    }).then((response) => {
+      if (response.success) {
+        toast.success("Profile successfully updated!");
+        
+    } else {
+        toast.error(`Profile update failed: ${response.error}`);
+    }
+    });
+};
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -137,6 +172,19 @@ const Page = () => {
                     <FormItem>
                       <FormControl>
                         <Input placeholder="Last Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
