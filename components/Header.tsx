@@ -15,6 +15,7 @@ import {
 } from "./ui/menubar";
 import { signOut } from "@/auth";
 import { getInitials } from "@/lib/utils";
+import { Session } from "next-auth";
 
 const Header = ({ session }: { session: Session }) => {
   const [isOpen, setIsOpen] = useState(false);
