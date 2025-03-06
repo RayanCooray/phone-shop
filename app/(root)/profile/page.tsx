@@ -16,6 +16,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { useSession } from "next-auth/react";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First Name must be at least 2 characters"),
@@ -29,10 +30,12 @@ const profileSchema = z.object({
   profileImage: z.string().optional(),
 });
 
-export default function ProfileEditPage() {
+const Page = () => {
+  const session = useSession();
+  console.log(session)
   const [profileImage, setProfileImage] = useState("");
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       firstName: "",
@@ -47,7 +50,7 @@ export default function ProfileEditPage() {
     },
   });
 
-  const onSubmit = (data: unknown) => {
+  const onSubmit = (data: z.infer<typeof profileSchema>) => {
     console.log("Profile Data:", data);
   };
 
@@ -231,3 +234,5 @@ export default function ProfileEditPage() {
     </div>
   );
 }
+
+export default Page;
