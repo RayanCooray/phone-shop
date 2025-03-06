@@ -13,11 +13,17 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "./ui/menubar";
+import { signOut } from "@/auth";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
 
+  const logOutfrom = async () => {
+    await signOut();
+    // const router = useRouter();
+    // router.push('/sign-in'); 
+  };
   return (
     <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/80 dark:bg-[#0F172A]/80 border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -109,9 +115,9 @@ const Header = () => {
                 </MenubarItem>
                 <MenubarItem asChild>
                   <Link
-                    href="/logout"
+                    href="/sign-in"
                     className="block w-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
-                  >
+                    onClick={logOutfrom}>
                     Logout
                   </Link>
                 </MenubarItem>

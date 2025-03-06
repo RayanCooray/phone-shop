@@ -1,7 +1,13 @@
 import Image from 'next/image';
 import React, { ReactNode } from 'react'
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
 
 const Layout = async ({ children }: { children: ReactNode }) => {
+  const session = await auth();
+
+  if (!session) redirect ("/sign-in");
   return (
     <main className="relative flex flex-col-reverse text-light-100 sm:flex-row">
       {/* Form Section */}
