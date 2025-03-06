@@ -14,10 +14,12 @@ import {
   MenubarTrigger,
 } from "./ui/menubar";
 import { signOut } from "@/auth";
+import { getInitials } from "@/lib/utils";
 
-const Header = () => {
+const Header = ({ session }: { session: Session }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+
 
   const logOutfrom = async () => {
     await signOut();
@@ -97,7 +99,7 @@ const Header = () => {
                 <Avatar className="cursor-pointer border border-black dark:border-white">
                   <AvatarImage src="/avatar.png" alt="User" />
                   <AvatarFallback className="text-black dark:text-white bg-gray-200 dark:bg-gray-800">
-                    U
+                  {getInitials(session?.user?.name || "IN")}
                   </AvatarFallback>
                 </Avatar>
               </MenubarTrigger>
