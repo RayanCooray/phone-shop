@@ -53,18 +53,21 @@ export const ProfileCreate = async (params: {
 };
 
 
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchProfile = async (accessToken: string, email: string): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/profile/get/${email}`, {
+    const response = await fetch(`http://localhost:5000/api/profile/get/?email=${encodeURIComponent(email)}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    const result = await response.json();
+    
+    const text = await response.text();
+    console.log("Raw API Response:", text);
+
+  
+    const result = JSON.parse(text);
 
     if (!response.ok) {
       return { success: false, error: result.message || "Failed to fetch profile" };
@@ -76,3 +79,6 @@ export const fetchProfile = async (accessToken: string, email: string): Promise<
     return { success: false, error: error instanceof Error ? error.message : "Something went wrong" };
   }
 };
+
+
+
