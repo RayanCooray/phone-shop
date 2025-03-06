@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useSession } from "next-auth/react";
-import { ProfileCreate } from "@/lib/actions/ProfileCreate";
+import { ProfileCreate ,fetchProfile } from "@/lib/actions/Profile";
 import { toast } from "sonner";
 
 const profileSchema = z.object({
@@ -36,7 +36,25 @@ const profileSchema = z.object({
 const Page = () => {
   const { data: session, status } = useSession();
 
-  //onload refresh
+  useEffect(() => {
+    const getProfile = async () => {
+      const accessToken = session?.user?.accessToken; 
+      const accessedUserEmail = session?.user?.email
+    
+      const result = await fetchProfile(accessToken,accessedUserEmail);
+    
+      if (result.success) {
+        console.log("Profile Data:", result.data);
+      } else {
+        console.error("Error:", result.error);
+      }
+    };
+
+    if (session?.user?.accessToken) {
+      getProfile();
+    }
+  }, [session]);
+
   
 useEffect(() => {
   console.log(session)
@@ -44,7 +62,6 @@ useEffect(() => {
   console.log(session?.user?.accessToken)
 }, [session, status]);
 
-  // console.log(session)
   const [profileImage, setProfileImage] = useState("");
 
   const form = useForm<z.infer<typeof profileSchema>>({
