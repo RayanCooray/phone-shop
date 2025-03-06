@@ -89,20 +89,51 @@ useEffect(() => {
 };
 
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (files && files[0]) {
+  //     const file = files[0];
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       if (typeof reader.result === "string") {
+  //         setProfileImage(reader.result);
+  //         form.setValue("profileImage", reader.result);
+  //       }
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files && files[0]) {
-      const file = files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setProfileImage(reader.result);
-          form.setValue("profileImage", reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!files || files.length === 0) return;
+  
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", file.name);
+    formData.append("folder", "/uploads");
+  
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const result = await response.json();
+      if (result.url) {
+        setProfileImage(result.url);
+        form.setValue("profileImage", result.url);
+        toast.success("Image uploaded successfully!");
+      } else {
+        toast.error("Image upload failed!");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Error uploading image.");
     }
   };
+  
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">
