@@ -1,6 +1,7 @@
 "use client";
 
 import AuthForm from "@/components/AuthForm";
+import { signUp } from "@/lib/actions/auth";
 import { signUpSchema } from "@/lib/validations";
 
 const Page = () => (
@@ -13,9 +14,7 @@ const Page = () => (
       password: "",
       confirmPassword: "",
     }}
-    onSubmit={async () => {
-      return { success: true, error: "" };
-    }}
+    onSubmit={signUp}
   />
 );
 
