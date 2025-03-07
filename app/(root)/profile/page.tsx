@@ -19,6 +19,7 @@ import {
 import { useSession } from "next-auth/react";
 import { ProfileCreate ,fetchProfile } from "@/lib/actions/Profile";
 import { toast } from "sonner";
+import { auth } from "@/auth";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First Name must be at least 2 characters"),
@@ -35,41 +36,15 @@ const profileSchema = z.object({
 
 const Page = () => {
   const { data: session, status } = useSession();
-
-  useEffect(() => {
-    const getProfile = async () => {
-      const accessToken = session?.user?.accessToken; 
-      const accessedUserEmail = session?.user?.email
-    
-      const result = await fetchProfile(accessToken,accessedUserEmail);
-    
-      if (result.success) {
-        console.log("Profile Data:", result.data);
-      } else {
-        console.error("Error:", result.error);
-      }
-    };
-
-    if (session?.user?.accessToken) {
-      getProfile();
-    }
-  }, [session]);
-
-  
-useEffect(() => {
-  console.log(session)
-  console.log(status)
-  console.log(session?.user?.accessToken)
-}, [session, status]);
-
   const [profileImage, setProfileImage] = useState("");
+  const [currentSession, setCurrentSession] = useState(null);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: session?.user?.name?.split(" ")[0] || "",
-      lastName: session?.user?.name?.split(" ")[1] || "",
-      email: session?.user?.email || "",
+      firstName: "",
+      lastName: "",
+      email: "",
       contact: "",
       addressLine1: "",
       apartment: "",
@@ -80,6 +55,54 @@ useEffect(() => {
     },
   });
 
+  useEffect(() => {
+    const hasReloaded = sessionStorage.getItem("hasReloaded");
+    if (!hasReloaded) {
+      sessionStorage.setItem("hasReloaded", "true");
+      window.location.reload();
+    }
+  }, []);
+
+  // Fetch session on component load
+  useEffect(() => {
+    const fetchSession = async () => {
+      const sessionData = await auth();
+      setCurrentSession(sessionData);
+    };
+
+    fetchSession();
+  }, []);
+
+  useEffect(() => {
+    if (!session?.user?.accessToken) return;
+
+    const getProfile = async () => {
+      try {
+        const accessToken = session.user.accessToken;
+        const accessedUserEmail = session.user.email;
+
+        const result = await fetchProfile(accessToken, accessedUserEmail);
+
+        if (result.success && result.data) {
+          console.log("Profile Data:", result.data);
+          form.reset(result.data);
+          setProfileImage(result.data.profileImage || "");
+        } else {
+          console.error("Error fetching profile:", result.error);
+        }
+      } catch (error) {
+        console.error("Unexpected error fetching profile:", error);
+      }
+    };
+
+    getProfile();
+  }, [session]);
+
+  useEffect(() => {
+    console.log("Session from useSession:", session);
+    console.log("Current session from getSession:", currentSession);
+    console.log("Status:", status);
+  }, [session, currentSession, status]);
 
   const onSubmit = (data: z.infer<typeof profileSchema>) => {
     const token = session?.user?.accessToken;
@@ -104,22 +127,6 @@ useEffect(() => {
     }
     });
 };
-
-
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = e.target.files;
-  //   if (files && files[0]) {
-  //     const file = files[0];
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       if (typeof reader.result === "string") {
-  //         setProfileImage(reader.result);
-  //         form.setValue("profileImage", reader.result);
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -232,7 +239,7 @@ useEffect(() => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Email" {...field} />
+                        <Input placeholder="Email" {...field} readOnly disabled/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
