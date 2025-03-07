@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
-  // console.log(session);
+  console.log(session);
   if (!session) redirect("/sign-in");
   return (
     <main className="w-screen">
