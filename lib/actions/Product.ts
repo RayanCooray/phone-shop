@@ -114,3 +114,33 @@ export const FilterProducts = async (
     };
   }
 };
+
+
+export const getById = async (id: string, accessToken: string): Promise<{ success: boolean; data?: any; error?: string }> => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/product/get/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: result.message || "Failed to get product",
+      };
+    }
+
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("GetProductById Error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Something went wrong",
+    };
+  }
+};

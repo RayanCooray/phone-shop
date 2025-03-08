@@ -37,8 +37,8 @@ const ProductList: FC = () => {
         Featured Products
       </h2>
       <div className="w-full flex justify-center">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {products.slice(0, 3).map((product) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
+                {products.slice(0, 3).map((product) => (
             <ProductCard
               key={product._id}
               id={product._id}
@@ -49,8 +49,8 @@ const ProductList: FC = () => {
               BaseColor={product.ProductColor}
             />
             ))}
-        </div>
-      </div>
+                </div>
+              </div>
     </div>
   );
 };
