@@ -1,59 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { GetAllProducts } from "@/lib/actions/Product";
+import { useSession } from "next-auth/react";
 
 const brands = ["Apple", "Samsung", "OnePlus", "Xiaomi", "Google"];
 const models = ["iPhone", "Galaxy", "Pixel", "Nord", "Redmi"];
-const products = [
-  {
-    id: 1,
-    title: "iPhone 15 Pro - Titanium Gold",
-    price: "$999",
-    image: "/images/15gl.webp",
-  },
-  {
-    id: 2,
-    title: "iPhone 15 Pro - Silver",
-    price: "$999",
-    image: "/images/15wh.webp",
-  },
-  {
-    id: 3,
-    title: "iPhone 15 Pro - Black",
-    price: "$999",
-    image: "/images/15blc.webp",
-  },
-  {
-    id: 4,
-    title: "iPhone 16 - Blue",
-    price: "$999",
-    image: "/images/16blu.webp",
-  },
-  {
-    id: 5,
-    title: "iPhone 16 - Green",
-    price: "$1088",
-    image: "/images/16gre.webp",
-  },
-  {
-    id: 6,
-    title: "iPhone 16 - Pink",
-    price: "$1000",
-    image: "/images/16pink.webp",
-  },
-];
 
 const Page = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { data: session } = useSession();
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+  
+    useEffect(() => {
+      if (session?.user?.accessToken) {
+        fetchProducts(session.user.accessToken);
+      }
+    }, [session]);
+  
+    const fetchProducts = async (accessToken: string) => {
+      setLoading(true);
+      const result = await GetAllProducts(accessToken); // Call the function from product.ts
+  
+      if (result.success) {
+        setProducts(result.data);
+      } else {
+        setError(result.error || "Failed to fetch products");
+      }
+      setLoading(false);
+    };
 
   const toggleSelection = (
     item: string,
@@ -145,12 +131,14 @@ const Page = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
             {products.map((product) => (
               <ProductCard
-                key={product.id}
-                id={product.id}
-                title={product.title}
-                price={product.price}
-                image={product.image}
-              />
+              key={product._id}
+              id={product._id}
+              title={product.ProductName}
+              price={product.ProductPrice}
+              image={product.ProductImage}
+              rating={product.ProductRating}
+              BaseColor={product.ProductColor}
+            />
             ))}
           </div>
         </div>

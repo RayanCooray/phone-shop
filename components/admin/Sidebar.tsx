@@ -6,8 +6,10 @@ import Link from "next/link";
 import { cn, getInitials } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
 
 const Sidebar = () => {
+  const {data:session} = useSession()
   const pathname = usePathname();
 
   return (
@@ -53,12 +55,12 @@ const Sidebar = () => {
       {/* Admin Profile Section */}
       <div className="flex items-center gap-4">
         <Avatar>
-          <AvatarFallback className="bg-amber-100">{getInitials("Ryan")}</AvatarFallback>
+          <AvatarFallback className="bg-amber-100">{getInitials(session?.user?.name || "IN")}</AvatarFallback>
         </Avatar>
 
         <div className="flex flex-col">
-          <p className="font-semibold text-gray-800">Ryan</p>
-          <p className="text-xs text-gray-500">Admin@PrimeMobiles.com</p>
+          <p className="font-semibold text-gray-800">{session?.user?.name}</p>
+          <p className="text-xs text-gray-500">{session?.user?.email}</p>
         </div>
       </div>
     </div>
