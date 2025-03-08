@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const ProfileCreate = async (params: {
   firstName: string;
   lastName: string;
@@ -12,13 +14,9 @@ export const ProfileCreate = async (params: {
   accessToken: string;
 }): Promise<{ success: boolean; error: string }> => {
   try {
-    const response = await fetch("http://localhost:5000/api/profile/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${params.accessToken}`,
-      },
-      body: JSON.stringify({
+    const response = await axios.post(
+      "http://localhost:5000/api/profile/create",
+      {
         firstName: params.firstName,
         lastName: params.lastName,
         email: params.email,
@@ -30,55 +28,45 @@ export const ProfileCreate = async (params: {
         postalCode: params.postalCode,
         profileImage: params.profileImage,
         accessToken: params.accessToken,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: result.message || "Failed to update profile",
-      };
-    }
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${params.accessToken}`,
+        },
+      }
+    );
 
     return { success: true, error: "" };
   } catch (error) {
     console.error("UpdateProfile Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Something went wrong",
+      error: error?.response?.data?.message || "Something went wrong",
     };
   }
 };
 
-
-export const fetchProfile = async (accessToken: string, email: string): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const fetchProfile = async (
+  accessToken: string,
+  email: string
+): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/profile/get/?email=${encodeURIComponent(email)}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.get(
+      `http://localhost:5000/api/profile/get/?email=${encodeURIComponent(email)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
-    
-    const text = await response.text();
-    console.log("Raw API Response:", text);
-
-  
-    const result = JSON.parse(text);
-
-    if (!response.ok) {
-      return { success: false, error: result.message || "Failed to fetch profile" };
-    }
-
-    return { success: true, data: result };
+    return { success: true, data: response.data };
   } catch (error) {
     console.error("fetchProfile Error:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Something went wrong" };
+    return {
+      success: false,
+      error: error?.response?.data?.message || "Something went wrong",
+    };
   }
 };
-
-
-

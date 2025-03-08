@@ -42,9 +42,9 @@ const Page = () => {
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
+      firstName: session?.user?.name?.split(" ")[0] || "",
+      lastName: session?.user?.name?.split(" ")[1] || "",
+      email: session?.user?.email || "",
       contact: "",
       addressLine1: "",
       apartment: "",

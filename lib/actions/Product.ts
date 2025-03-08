@@ -1,3 +1,4 @@
+import axios from "axios";
 import type { phoneSchema } from "@/lib/validations";
 
 export const addProduct = async ({
@@ -8,65 +9,48 @@ export const addProduct = async ({
   accessToken: string;
 }): Promise<{ success: boolean; error: string }> => {
   try {
-    const response = await fetch("http://localhost:5000/api/product/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(productData),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: result.message || "Failed to add product",
-      };
-    }
+    const response = await axios.post(
+      "http://localhost:5000/api/product/create",
+      productData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    
 
     return { success: true, error: "" };
   } catch (error) {
     console.error("AddProduct Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Something went wrong",
+      error: error?.response?.data?.message || "Something went wrong",
     };
   }
 };
 
-
-export const GetAllProducts = async (accessToken: string): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const GetAllProducts = async (
+  accessToken: string
+): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
-    const response = await fetch("http://localhost:5000/api/product/getAll", {
-      method: "GET",
+    const response = await axios.get("http://localhost:5000/api/product/getAll", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    const result = await response.json();
-    
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: result.message || "Failed to fetch products",
-      };
-    }
-
-    return { success: true, data: result };
+    return { success: true, data: response.data };
   } catch (error) {
     console.error("GetAllProducts Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Something went wrong",
+      error: error?.response?.data?.message || "Something went wrong",
     };
   }
-}
-
+};
 
 export const FilterProducts = async (
   accessToken: string,
@@ -88,59 +72,48 @@ export const FilterProducts = async (
           .map(([key, value]) => [key, String(value)])
       )
     ).toString();
-    const response = await fetch(`http://localhost:5000/api/product/filter?${queryString}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
 
-    const result = await response.json();
+    const response = await axios.get(
+      `http://localhost:5000/api/product/filter?${queryString}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
-    if (!response.ok) {
-      return {
-        success: false,
-        error: result.message || "Failed to filter products",
-      };
-    }
-    console.log(result);
-    return { success: true, data: result };
+    return { success: true, data: response.data };
   } catch (error) {
     console.error("FilterProducts Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Something went wrong",
+      error: error?.response?.data?.message || "Something went wrong",
     };
   }
 };
 
-
-export const getProductById = async (id: string, accessToken: string): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const getProductById = async (
+  id: string,
+  accessToken: string
+): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/product/get/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.get(
+      `http://localhost:5000/api/product/get/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: result.message || "Failed to get product",
-      };
-    }
-
-    return { success: true, data: result };
+    return { success: true, data: response.data };
   } catch (error) {
     console.error("GetProductById Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Something went wrong",
+      error: error?.response?.data?.message || "Something went wrong",
     };
   }
 };
