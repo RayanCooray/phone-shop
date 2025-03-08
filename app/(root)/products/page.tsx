@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { GetAllProducts } from "@/lib/actions/Product";
 import { useSession } from "next-auth/react";
+import { FilterProducts } from "@/lib/actions/Product"; // Make sure to import the FilterProducts method
 
 const brands = ["Apple", "Samsung", "OnePlus", "Xiaomi", "Google"];
 const models = ["iPhone", "Galaxy", "Pixel", "Nord", "Redmi"];
@@ -19,27 +20,27 @@ const Page = () => {
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { data: session } = useSession();
-    const [products, setProducts] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-  
-    useEffect(() => {
-      if (session?.user?.accessToken) {
-        fetchProducts(session.user.accessToken);
-      }
-    }, [session]);
-  
-    const fetchProducts = async (accessToken: string) => {
-      setLoading(true);
-      const result = await GetAllProducts(accessToken); // Call the function from product.ts
-  
-      if (result.success) {
-        setProducts(result.data);
-      } else {
-        setError(result.error || "Failed to fetch products");
-      }
-      setLoading(false);
-    };
+  const [products, setProducts] = useState<any[]>([]); // Default to empty array
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.user?.accessToken) {
+      fetchProducts(session.user.accessToken);
+    }
+  }, [session]);
+
+  const fetchProducts = async (accessToken: string) => {
+    setLoading(true);
+    const result = await GetAllProducts(accessToken);
+
+    if (result.success) {
+      setProducts(Array.isArray(result.data) ? result.data : []);
+    } else {
+      setError(result.error || "Failed to fetch products");
+    }
+    setLoading(false);
+  };
 
   const toggleSelection = (
     item: string,
@@ -55,6 +56,37 @@ const Page = () => {
     setSelectedBrands([]);
     setSelectedModels([]);
     setPriceRange([0, 2000]);
+    fetchProducts()
+  };
+
+  const applyFilters = async () => {
+    if (!session?.user?.accessToken) return;
+
+    // Create filter object dynamically to avoid sending default values
+    const filters: { brand?: string; category?: string; minPrice?: number; maxPrice?: number; color?: string; size?: string; rating?: number } = {};
+
+    if (selectedBrands.length > 0) {
+      filters.brand = selectedBrands.join(","); // Convert array to comma-separated string
+    }
+
+    if (selectedModels.length > 0) {
+      filters.category = selectedModels.join(",");
+    }
+
+    if (priceRange[0] !== 0 || priceRange[1] !== 2000) {
+      filters.minPrice = priceRange[0];
+      filters.maxPrice = priceRange[1];
+    }
+
+    setLoading(true);
+    const result = await FilterProducts(session.user.accessToken, filters);
+
+    if (result.success) {
+      setProducts(Array.isArray(result.data) ? result.data : []); // Ensure it's an array
+    } else {
+      setError(result.error || "Failed to filter products");
+    }
+    setLoading(false);
   };
 
   return (
@@ -125,20 +157,25 @@ const Page = () => {
           <Button variant="outline" onClick={resetFilters} className="w-full">
             Reset Filters
           </Button>
+
+          <Button onClick={applyFilters} className="w-full mt-4">
+            Apply Filters
+          </Button>
         </Card>
 
         <div className="w-full flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
-            {products.map((product) => (
+            {/* Ensure products is always an array */}
+            {Array.isArray(products) && products.map((product) => (
               <ProductCard
-              key={product._id}
-              id={product._id}
-              title={product.ProductName}
-              price={product.ProductPrice}
-              image={product.ProductImage}
-              rating={product.ProductRating}
-              BaseColor={product.ProductColor}
-            />
+                key={product._id}
+                id={product._id}
+                title={product.ProductName}
+                price={product.ProductPrice}
+                image={product.ProductImage}
+                rating={product.ProductRating}
+                BaseColor={product.ProductColor}
+              />
             ))}
           </div>
         </div>
