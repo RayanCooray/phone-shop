@@ -116,7 +116,7 @@ export const FilterProducts = async (
 };
 
 
-export const getById = async (id: string, accessToken: string): Promise<{ success: boolean; data?: any; error?: string }> => {
+export const getProductById = async (id: string, accessToken: string): Promise<{ success: boolean; data?: any; error?: string }> => {
   try {
     const response = await fetch(`http://localhost:5000/api/product/get/${id}`, {
       method: "GET",
