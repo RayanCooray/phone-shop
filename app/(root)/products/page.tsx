@@ -61,33 +61,31 @@ const Page = () => {
 
   const applyFilters = async () => {
     if (!session?.user?.accessToken) return;
-
-    // Create filter object dynamically to avoid sending default values
-    const filters: { brand?: string; category?: string; minPrice?: number; maxPrice?: number; color?: string; size?: string; rating?: number } = {};
-
-    if (selectedBrands.length > 0) {
-      filters.brand = selectedBrands.join(","); // Convert array to comma-separated string
-    }
-
-    if (selectedModels.length > 0) {
-      filters.category = selectedModels.join(",");
-    }
-
+  
+    const filters: { brand?: string; category?: string; minPrice?: number; maxPrice?: number } = {};
+    if (selectedBrands.length > 0) filters.brand = selectedBrands.join(",");
+    if (selectedModels.length > 0) filters.category = selectedModels.join(",");
     if (priceRange[0] !== 0 || priceRange[1] !== 2000) {
       filters.minPrice = priceRange[0];
       filters.maxPrice = priceRange[1];
     }
-
+  
     setLoading(true);
-    const result = await FilterProducts(session.user.accessToken, filters);
-
-    if (result.success) {
-      setProducts(Array.isArray(result.data) ? result.data : []); // Ensure it's an array
-    } else {
-      setError(result.error || "Failed to filter products");
+    try {
+      const result = await FilterProducts(session.user.accessToken, filters);
+      console.log("Filtered Products Response:", result); 
+      
+      if (result?.success && Array.isArray(result.data?.data)) {
+        setProducts(result.data.data); 
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Error filtering products:", error);
     }
     setLoading(false);
   };
+  
 
   return (
     <div className="container mx-auto py-10 px-4">

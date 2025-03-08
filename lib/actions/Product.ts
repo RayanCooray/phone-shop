@@ -104,7 +104,7 @@ export const FilterProducts = async (
         error: result.message || "Failed to filter products",
       };
     }
-
+    console.log(result);
     return { success: true, data: result };
   } catch (error) {
     console.error("FilterProducts Error:", error);
