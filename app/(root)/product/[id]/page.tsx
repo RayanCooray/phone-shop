@@ -6,14 +6,15 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Star, ShoppingCart, X } from "lucide-react"; // Added X icon for closing the slide
+import { Star, ShoppingCart, X } from "lucide-react"; 
 import Policy from "@/components/page/Policy";
 import Link from "next/link";
 
 const Page = ({ params }: { params: { id: string } }) => {
   const { data: session } = useSession();
   const [product, setProduct] = useState<any>(null);
-  const [isSlideOpen, setIsSlideOpen] = useState(false); // New state to control the sliding window
+  const [isSlideOpen, setIsSlideOpen] = useState(false); 
+  const [cart, setCart] = useState<any[]>([]);
 
   const fetchProductById = async (id: string, accessToken: string) => {
     try {
@@ -33,18 +34,24 @@ const Page = ({ params }: { params: { id: string } }) => {
     }
   }, [params.id, session]);
 
+
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+    setCart(cartItems);
+  }, [isSlideOpen]); 
+
   if (!product) {
     return (
       <h1 className="text-3xl text-black text-center mt-10">Loading...</h1>
     );
   }
 
-  // Toggle the sliding window
+  
   const toggleSlide = () => {
     setIsSlideOpen(!isSlideOpen);
   };
 
-  // Add product to wishlist in localStorage
+  
   const addToWishlist = () => {
     const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
     const productExists = wishlist.find((item: any) => item._id === product._id);
@@ -58,7 +65,7 @@ const Page = ({ params }: { params: { id: string } }) => {
     }
   };
 
-  // Add product to cart in localStorage
+  
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const productExists = cart.find((item: any) => item._id === product._id);
@@ -66,7 +73,7 @@ const Page = ({ params }: { params: { id: string } }) => {
     if (productExists) {
       toast.error("Product is already in your cart!");
     } else {
-      cart.push(product);
+      cart.push(product); 
       localStorage.setItem("cart", JSON.stringify(cart));
       toast.success("Product added to cart!");
     }
@@ -122,11 +129,12 @@ const Page = ({ params }: { params: { id: string } }) => {
               Add to Wishlist
             </Button>
 
-          
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-5 rounded-lg text-sm" onClick={toggleSlide}>
-                Buy Now
-              </Button>
-        
+            <Button
+              className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-5 rounded-lg text-sm"
+              onClick={toggleSlide}
+            >
+              Buy Now
+            </Button>
           </div>
         </div>
       </div>
@@ -142,42 +150,36 @@ const Page = ({ params }: { params: { id: string } }) => {
           }`}
         >
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">Product Details</h2>
+            <h2 className="text-2xl font-bold">Cart Items</h2>
             <Button onClick={toggleSlide}>
               <X className="w-6 h-6 text-gray-600" />
             </Button>
           </div>
 
           <div className="mt-6 space-y-4">
-            <div className="flex justify-between text-sm">
-              <span className="font-semibold">Product Name:</span>
-              <span>{product.ProductName}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="font-semibold">Brand:</span>
-              <span>{product.ProductBrand}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="font-semibold">Price:</span>
-              <span>{product.ProductPrice} LKR</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="font-semibold">Color:</span>
-              <span>{product.ProductColor}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="font-semibold">Rating:</span>
-              <span>{product.ProductRating} / 5</span>
-            </div>
-            <div className="mt-6">
-              <Image
-                src={product.ProductImage}
-                alt={product.ProductName}
-                width={150}
-                height={150}
-                className="rounded-lg"
-              />
-            </div>
+            {cart.length > 0 ? (
+              cart.map((item: any, index: number) => (
+                <div key={index} className="flex gap-4 items-center">
+                  <Image
+                    src={item.ProductImage}
+                    alt={item.ProductName}
+                    width={50}
+                    height={50}
+                    className="rounded-lg"
+                  />
+                  <div className="space-y-2">
+                    <p className="font-semibold">{item.ProductName}</p>
+                    <p className="text-yellow-600 font-semibold">{item.ProductPrice} LKR</p>
+                    <div className="flex items-center text-yellow-500">
+                      <Star className="w-5 h-5 fill-yellow-500" />
+                      <span className="ml-2 font-semibold">{item.ProductRating} / 5</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>Your cart is empty.</p>
+            )}
           </div>
 
           <div className="flex justify-end mt-6">
