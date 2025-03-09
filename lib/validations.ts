@@ -56,5 +56,4 @@ export const orderSchema = z.object({
     country: z.string().min(1),
     contactNumber: z.string().min(10),
   }),
-  status: z.enum(["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]),
 })

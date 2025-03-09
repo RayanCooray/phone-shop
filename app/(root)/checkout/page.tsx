@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { createOrder } from "@/lib/actions/Order";
 
 const checkoutSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -30,6 +32,15 @@ const Page = () => {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedPayment, setSelectedPayment] = useState("Credit Card");
+  const { data: session } = useSession();
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.user?.accessToken) {
+      setToken(session.user.accessToken);
+    }
+  }, [session]);
+
 
   useEffect(() => {
     const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -55,10 +66,60 @@ const Page = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    toast.success(`Payment of ${totalPrice} LKR made via ${data.paymentMethod}!`);
+  const onSubmit = async (data: any) => {
+    const userId = session?.user?.id; 
+    const AccessToken = token;
+    
+    if (!userId || !token) {
+      toast.error("User or Token is missing");
+      return;
+    }
+  
+    const products = cart.map(item => ({
+      product: item._id,  
+      quantity: 1, 
+      price: item.ProductPrice,  
+    }));
+  
+    const totalAmount = totalPrice;
+    const payment = {
+      cardLast4Digits: data.cardNumber.slice(-4), 
+      paymentMethod: data.paymentMethod,
+      status: "Paid",
+    };
+  
+    const shippingAddress = {
+      fullName: data.fullName,
+      street: data.street,
+      city: data.city,
+      state: data.state,
+      zipCode: data.zipCode,
+      country: data.country,
+      contactNumber: data.contactNumber,
+    };
+  
+    const requestData = {
+      user: userId,
+      products,
+      totalAmount,
+      payment,
+      shippingAddress,
+    };
+  
+
+    const response = await createOrder({
+      orderData: requestData, 
+      accessToken: AccessToken,
+    });
+  
+    if (response.success) { 
+      toast.success(`Payment of ${totalPrice} LKR made via ${data.paymentMethod}! and Your order was placed ${response}`);
+    } else {
+      toast.error(response.error);
+    }
     localStorage.removeItem("cart");
     setCart([]);
+    form.reset();
   };
 
   return (
@@ -113,13 +174,10 @@ const Page = () => {
             onChange={(e) => setSelectedPayment(e.target.value)}
           >
             <option value="Credit Card">Credit Card</option>
-            <option value="PayPal">PayPal</option>
-            <option value="Google Pay">Google Pay</option>
-            <option value="Apple Pay">Apple Pay</option>
           </select>
           <FormMessage />
 
-          {selectedPayment === "Credit Card" && (
+          
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-100 p-4 rounded-lg">
               {Object.keys(checkoutSchema.shape).slice(7).map((field) => (
                 <FormField
@@ -138,7 +196,6 @@ const Page = () => {
                 />
               ))}
             </div>
-          )}
 
           <div className="mt-6 flex flex-col md:flex-row gap-4">
             <Button type="submit" className="bg-blue-950 hover:bg-blue-700 text-white py-2 px-5 rounded-lg">
