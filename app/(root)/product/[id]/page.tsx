@@ -181,7 +181,6 @@ const Page = ({ params }: { params: { id: string } }) => {
               <p>Your cart is empty.</p>
             )}
           </div>
-
           <div className="flex justify-end mt-6">
             <Link href="/checkout">
               <Button className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-5 rounded-lg text-sm">
