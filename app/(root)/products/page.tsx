@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { GetAllProducts } from "@/lib/actions/Product";
 import { useSession } from "next-auth/react";
-import { FilterProducts } from "@/lib/actions/Product"; // Make sure to import the FilterProducts method
+import { FilterProducts } from "@/lib/actions/Product";
 
 const brands = ["Apple", "Samsung", "OnePlus", "Xiaomi", "Google"];
 const models = ["iPhone", "Galaxy", "Pixel", "Nord", "Redmi"];
@@ -20,7 +20,7 @@ const Page = () => {
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { data: session } = useSession();
-  const [products, setProducts] = useState<any[]>([]); // Default to empty array
+  const [products, setProducts] = useState<any[]>([]); 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -163,7 +163,6 @@ const Page = () => {
 
         <div className="w-full flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
-            {/* Ensure products is always an array */}
             {Array.isArray(products) && products.map((product) => (
               <ProductCard
                 key={product._id}
