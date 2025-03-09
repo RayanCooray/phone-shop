@@ -8,11 +8,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Star, ShoppingCart, X } from "lucide-react"; // Added X icon for closing the slide
 import Policy from "@/components/page/Policy";
+import Link from "next/link";
 
 const Page = ({ params }: { params: { id: string } }) => {
   const { data: session } = useSession();
   const [product, setProduct] = useState<any>(null);
-  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
   const [isSlideOpen, setIsSlideOpen] = useState(false); // New state to control the sliding window
 
   const fetchProductById = async (id: string, accessToken: string) => {
@@ -20,7 +20,6 @@ const Page = ({ params }: { params: { id: string } }) => {
       const response = await getProductById(id, accessToken);
       if (response.success) {
         setProduct(response.data);
-        setSelectedStorage(response.data.ProductStorageOptions?.[0]);
       }
     } catch (error) {
       console.error("GetProductById Error:", error);
@@ -43,6 +42,34 @@ const Page = ({ params }: { params: { id: string } }) => {
   // Toggle the sliding window
   const toggleSlide = () => {
     setIsSlideOpen(!isSlideOpen);
+  };
+
+  // Add product to wishlist in localStorage
+  const addToWishlist = () => {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    const productExists = wishlist.find((item: any) => item._id === product._id);
+
+    if (productExists) {
+      toast.error("Product is already in your wishlist!");
+    } else {
+      wishlist.push(product);
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      toast.success("Product added to wishlist!");
+    }
+  };
+
+  // Add product to cart in localStorage
+  const addToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const productExists = cart.find((item: any) => item._id === product._id);
+
+    if (productExists) {
+      toast.error("Product is already in your cart!");
+    } else {
+      cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      toast.success("Product added to cart!");
+    }
   };
 
   return (
@@ -82,23 +109,30 @@ const Page = ({ params }: { params: { id: string } }) => {
           </div>
 
           <div className="flex gap-4 mt-6">
-            <Button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg text-lg">
+            <Button
+              onClick={addToCart}
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg text-lg"
+            >
               <ShoppingCart className="w-5 h-5" /> Add to Cart
             </Button>
             <Button
-              onClick={toggleSlide}
+              onClick={addToWishlist}
               className="bg-black text-white py-3 px-6 rounded-lg text-lg hover:bg-gray-800"
             >
-              Buy It Now
+              Add to Wishlist
             </Button>
+
+          
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-5 rounded-lg text-sm" onClick={toggleSlide}>
+                Buy Now
+              </Button>
+        
           </div>
         </div>
       </div>
 
       <div
-        className={`fixed inset-0 transition-all duration-300 ${
-          isSlideOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed inset-0 transition-all duration-300 ${isSlideOpen ? "translate-x-0" : "translate-x-full"}`}
         onClick={toggleSlide}
         style={{ zIndex: 50 }}
       >
@@ -147,10 +181,11 @@ const Page = ({ params }: { params: { id: string } }) => {
           </div>
 
           <div className="flex justify-end mt-6">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-5 rounded-lg text-sm">
-              {" "}
-              Proceed to Checkout
-            </Button>
+            <Link href="/checkout">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-5 rounded-lg text-sm">
+                Proceed to Checkout
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

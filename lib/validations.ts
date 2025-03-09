@@ -30,3 +30,31 @@ export const phoneSchema = z.object({
   ProductRating: z.string().regex(/^[0-5](\.\d{1})?$/, "Enter a rating between 0-5").optional(),
   ProductImage: z.any().optional(),
 });
+
+
+export const orderSchema = z.object({
+  user: z.string().min(1),
+  products: z.array(
+    z.object({
+      product: z.string().min(1),
+      quantity: z.number().min(1),
+      price: z.number().min(0),
+    })
+  ).nonempty(),
+  totalAmount: z.number().min(0),
+  payment: z.object({
+    cardLast4Digits: z.string().length(4).regex(/^\d{4}$/),
+    paymentMethod: z.enum(["Credit Card", "PayPal", "Google Pay", "Apple Pay"]),
+    status: z.enum(["Paid", "Failed", "Pending"]),
+  }),
+  shippingAddress: z.object({
+    fullName: z.string().min(1),
+    street: z.string().min(1),
+    city: z.string().min(1),
+    state: z.string().min(1),
+    zipCode: z.string().min(1),
+    country: z.string().min(1),
+    contactNumber: z.string().min(10),
+  }),
+  status: z.enum(["Pending", "Processing", "Shipped", "Delivered", "Cancelled"]),
+})
