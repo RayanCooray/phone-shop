@@ -31,6 +31,28 @@ export const createOrder = async ({
 };
 
 
+export const getAllOrders = async (accessToken: string): Promise<{ success: boolean; error: string; data?: any }> => {
+  try {
+    const response = await axios.get("http://localhost:5000/api/orders/getAll", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return { success: true, error: "", data: response.data.data };
+    } else {
+      return { success: false, error: "Unexpected server response" };
+    }
+  } catch (error: any) {
+    console.error("GetAllOrders Error:", error);
+    return {
+      success: false,
+      error: error.response?.data?.message || "Something went wrong",
+    };
+  }
+};
 
 export const getOrdersByUserId = async (
   userId: string,
@@ -94,8 +116,8 @@ export const updateOrderStatus = async (
 ): Promise<{ success: boolean; error: string }> => {
   try {
     await axios.put(
-      `http://localhost:5000/api/orders/updateStatus/${orderId}`,
-      { status },
+      `http://localhost:5000/api/orders/update?id=${orderId}&status=${status}`, 
+      {}, 
       {
         headers: {
           "Content-Type": "application/json",

@@ -68,6 +68,12 @@ const Header = ({ session }: { session: Session }) => {
           >
             Contact
           </Link>
+          <Link
+            href="/CheckOrders"
+            className="text-gray-800 dark:text-gray-300 hover:text-[#F43F5E] dark:hover:text-[#F87171] transition font-medium ibm-plex-sans"
+          >
+            Your Orders
+          </Link>
         </nav>
 
         <div className="hidden md:flex items-center space-x-6">
