@@ -57,7 +57,7 @@ const ProductCard: FC<ProductCardProps> = ({ id, title, price, image, rating, Ba
       </CardContent>
 
       <CardFooter className="mt-4">
-        <Button className="w-full bg-amber-500 text-black flex items-center justify-center gap-2 hover:bg-amber-400 transition-all duration-300 py-3 rounded-lg font-semibold text-lg">
+        <Button className="w-full bg-purple-500 text-black flex items-center justify-center gap-2 hover:bg-purple-300 transition-all duration-300 py-3 rounded-lg font-semibold text-lg">
           <ShoppingCart size={20} />
           Add to Cart
         </Button>
