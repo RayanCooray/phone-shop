@@ -55,7 +55,7 @@ const Page = () => {
 
       <div className="mt-7 w-full overflow-hidden">
         <Table>
-          <TableCaption>A list of all products.</TableCaption>
+          <TableCaption>products.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Image</TableHead>
