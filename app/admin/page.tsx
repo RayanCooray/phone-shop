@@ -1,35 +1,89 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 import { DollarSign, ShoppingCart, MoreHorizontal, Filter } from "lucide-react";
 import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem } from "@/components/ui/menubar";
+import { useSession } from "next-auth/react";
+import { getAllOrders } from "@/lib/actions/Order";
+import { toast } from "sonner";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const payments = [
-  { id: 1, status: "Success", email: "ken99@example.com", amount: 316 },
-  { id: 2, status: "Success", email: "abe45@example.com", amount: 242 },
-  { id: 3, status: "Processing", email: "monserrat44@example.com", amount: 837 },
-  { id: 4, status: "Failed", email: "carmella@example.com", amount: 721 },
-];
 
-const chartData = {
-  labels: ["Success", "Processing", "Failed"],
-  datasets: [
-    {
-      data: [
-        payments.filter(p => p.status === "Success").reduce((sum, p) => sum + p.amount, 0),
-        payments.filter(p => p.status === "Processing").reduce((sum, p) => sum + p.amount, 0),
-        payments.filter(p => p.status === "Failed").reduce((sum, p) => sum + p.amount, 0),
-      ],
-      backgroundColor: ["#4CAF50", "#FFC107", "#F44336"],
-      hoverBackgroundColor: ["#388E3C", "#FFA000", "#D32F2F"],
-    },
-  ],
+const computeChartData = (orders) => {
+  const statusCounts = {
+    Shipped: 0,
+    Cancelled: 0,
+    Delivered: 0,
+    Pending: 0,
+    Processing: 0,
+  };
+
+  orders.forEach((order) => {
+    if (statusCounts[order.status] !== undefined) {
+      statusCounts[order.status] += order.totalAmount;
+    }
+  });
+
+  return {
+    labels: ["Shipped", "Cancelled", "Delivered", "Pending", "Processing"], 
+    datasets: [
+      {
+        data: [
+          statusCounts.Shipped, 
+          statusCounts.Cancelled, 
+          statusCounts.Delivered, 
+          statusCounts.Pending, 
+          statusCounts.Processing
+        ],
+        backgroundColor: [
+          "#FF6F61",  
+          "#6A0572",  
+          "#1E88E5",  
+          "#FFB400",  
+          "#2E8B57"   
+        ],
+        hoverBackgroundColor: [
+          "#D84315",  
+          "#4A148C",  
+          "#1565C0",  
+          "#FF8F00",  
+          "#006400"   
+        ],
+      },
+    ],
+  };
 };
 
+
 const Page = () => {
+  const { data: session } = useSession();
+  const token = session?.user?.accessToken;
+  const [orders, setOrders] = useState([]);
+  const totalIncome = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalSales = orders.length;
+  const [chartData, setChartData] = useState(computeChartData([]));
+
+  useEffect(() => {
+    setChartData(computeChartData(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    if (token) {
+      fetchOrders(token);
+    }
+  }, [token]);
+
+  const fetchOrders = async (token) => {
+    const result = await getAllOrders(token);
+    if (result.success) {
+      setOrders(result.data);
+      toast.success("Orders fetched successfully!");
+    } else {
+      toast.error(result.error || "Failed to fetch orders");
+    }
+  };
   return (
     <section className="w-full rounded-2xl bg-white p-7 shadow-lg">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -43,7 +97,7 @@ const Page = () => {
           </div>
           <div>
             <h3 className="text-lg font-medium">Total Income</h3>
-            <p className="text-3xl font-bold mt-2">$12,540.00</p>
+            <p className="text-3xl font-bold mt-2">Rs {totalIncome}</p>
           </div>
         </div>
 
@@ -53,7 +107,7 @@ const Page = () => {
           </div>
           <div>
             <h3 className="text-lg font-medium">Total Sales</h3>
-            <p className="text-3xl font-bold mt-2">1,234</p>
+            <p className="text-3xl font-bold mt-2">{totalSales}</p>
           </div>
         </div>
       </div>
@@ -61,7 +115,7 @@ const Page = () => {
       <div className="mt-10 flex flex-wrap lg:flex-nowrap gap-10">
         <div className="lg:w-2/3 w-full rounded-2xl bg-[#F1F1F1] p-6 text-black shadow-lg">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-xl font-semibold">Payments</h2>
+            <h2 className="text-xl font-semibold">Recent Orders</h2>
             <Menubar className="bg-gray-800 text-white rounded-lg">
               <MenubarMenu>
                 <MenubarTrigger className="px-4 py-2 flex items-center gap-2">
@@ -90,11 +144,11 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {payments.map((payment) => (
-                  <tr key={payment.id} className="border-b border-gray-800">
+                {orders.map((payment) => (
+                  <tr key={payment._id} className="border-b border-gray-800">
                     <td className="py-4">{payment.status}</td>
-                    <td className="py-4">{payment.email}</td>
-                    <td className="py-4">${payment.amount}</td>
+                    <td className="py-4">{payment.user.email}</td>
+                    <td className="py-4">Rs {payment.totalAmount.toLocaleString()}</td>
                     <td className="py-4">
                       <MoreHorizontal size={20} className="text-gray-500 cursor-pointer" />
                     </td>

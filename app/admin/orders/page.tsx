@@ -58,7 +58,7 @@ const Page = () => {
 
   return (
     <section className="w-full rounded-3xl bg-white p-7">
-      {/* Orders Table */}
+    
       <div className="mb-8">
         <h2 className="text-xl font-semibold">All Orders</h2>
         <Table className="mt-5 shadow-md rounded-2xl border">
@@ -77,19 +77,18 @@ const Page = () => {
     {orders.length > 0 ? (
       orders.map((order) => (
         <TableRow key={order._id} className="border-b">
-          {/* Order ID */}
+         
           <TableCell className="font-medium">{order._id.slice(-6)}</TableCell>
 
-          {/* Customer Name */}
+          
           <TableCell>{order.shippingAddress.fullName}</TableCell>
 
-          {/* Payment Method */}
+          
           <TableCell>
             {order.payment.paymentMethod} <br />
             <span className="text-gray-500 text-sm">•••• {order.payment.cardLast4Digits}</span>
           </TableCell>
 
-          {/* Products List */}
           <TableCell>
             {order.products.map((item) => (
               <div key={item.product._id} className="mb-1">
@@ -98,7 +97,7 @@ const Page = () => {
             ))}
           </TableCell>
 
-          {/* Order Status */}
+          
           <TableCell>
             <span
               className={`px-3 py-1 rounded-full text-white text-sm ${
@@ -115,7 +114,7 @@ const Page = () => {
             </span>
           </TableCell>
 
-          {/* Total Amount */}
+          
           <TableCell className="text-right font-semibold">Rs {order.totalAmount.toLocaleString()}</TableCell>
         </TableRow>
       ))
@@ -129,39 +128,7 @@ const Page = () => {
   </TableBody>
 </Table>
 
-        {/* <Table className="mt-5">
-          <TableCaption>Recent orders</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Order ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Payment</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.length > 0 ? (
-              orders.map((order) => (
-                <TableRow key={order._id}>
-                  <TableCell className="font-medium">{order._id.slice(-6)}</TableCell>
-                  <TableCell>{order.shippingAddress.fullName}</TableCell>
-                  <TableCell>{order.payment.paymentMethod}</TableCell>
-                  <TableCell>{order.products.product.ProductName}</TableCell>
-                  <TableCell>{order.status}</TableCell>
-                  <TableCell className="text-right">Rs {order.totalAmount}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  No orders found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table> */}
+        
       </div>
 
       
@@ -174,7 +141,7 @@ const Page = () => {
   </CardHeader>
   <CardContent>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Order ID Selection */}
+    
       <div>
         <Label className="text-gray-600 font-medium">Select Order</Label>
         <Select onValueChange={setSelectedOrder}>
@@ -191,7 +158,7 @@ const Page = () => {
         </Select>
       </div>
 
-      {/* Order Status Selection */}
+      
       <div>
         <Label className="text-gray-600 font-medium">Order Status</Label>
         <Select onValueChange={setStatus}>
@@ -208,7 +175,7 @@ const Page = () => {
         </Select>
       </div>
 
-      {/* Submit Button */}
+     
       <div className="flex items-end">
         <Button
           onClick={handleStatusUpdate}
