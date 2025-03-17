@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { GetAllProducts } from "@/lib/actions/Product";
+import { deleteProduct, GetAllProducts } from "@/lib/actions/Product";
+import { toast } from "sonner";
 
 const Page = () => {
   const { data: session } = useSession();
@@ -18,6 +19,7 @@ const Page = () => {
       fetchProducts(session.user.accessToken);
     }
   }, [session]);
+  console.log(session?.user?.accessToken)
 
   const fetchProducts = async (accessToken: string) => {
     setLoading(true);
@@ -31,11 +33,21 @@ const Page = () => {
     setLoading(false);
   };
 
-  const handleDelete = async (productId: string) => {
+  const handleDelete = async (productId: string, accessToken: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
-      // Make a request to delete the product
-      // You can use your backend API for this
-      console.log(`Delete product with id: ${productId}`);
+      try {
+        const response = await deleteProduct(productId, session?.user?.accessToken || '');
+  
+        if (response && response.success) {
+          toast.success("✅ Product deleted successfully!");
+          fetchProducts(accessToken); // Fetch updated product list after deletion
+        } else {
+          toast.error(`❌ Delete Product failed: ${response?.error || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error("Delete Error:", error);
+        toast.error("❌ Failed to delete product.");
+      }
     }
   };
 
@@ -98,3 +110,4 @@ const Page = () => {
 };
 
 export default Page;
+

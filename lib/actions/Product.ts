@@ -52,6 +52,27 @@ export const GetAllProducts = async (
   }
 };
 
+export const deleteProduct = async (id: string, accessToken: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:5000/api/product/delete/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("DeleteProduct Error:", error);
+    return {
+      success: false,
+      error: error?.response?.data?.message || "Something went wrong",
+    };
+  }
+};
+
+
 export const FilterProducts = async (
   accessToken: string,
   filters: {
