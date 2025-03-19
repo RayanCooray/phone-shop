@@ -5,7 +5,7 @@ const About = () => {
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-gray-950 ">
       
-      <div className="absolute inset-0  bg-cover bg-center opacity-25"></div>
+      <div className="absolute inset-0  bg-cover bg-center opacity-25"> </div>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
      
