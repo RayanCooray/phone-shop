@@ -26,7 +26,7 @@ Ensure you have the following installed:
 ### Steps
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/yourusername/prime-mobiles.git
+   git clone https://github.com/RayanCooray/phone-shop
    cd prime-mobiles
    ```
 2. **Install dependencies:**
@@ -93,5 +93,5 @@ This project is licensed under the MIT License.
 - **Dilud Ryan** - [GitHub Profile](https://github.com/RayanCooray)
 
 ## Contact
-For issues or contributions, open a GitHub issue or contact me at `your-email@example.com`.
+For issues or contributions, open a GitHub issue or contact me at `raycooray32@gmail.com`.
 
