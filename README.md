@@ -90,7 +90,7 @@ To deploy the project:
 This project is licensed under the MIT License.
 
 ## Contributors
-- **Your Name** - [GitHub Profile](https://github.com/yourusername)
+- **Dilud Ryan** - [GitHub Profile](https://github.com/RayanCooray)
 
 ## Contact
 For issues or contributions, open a GitHub issue or contact me at `your-email@example.com`.
