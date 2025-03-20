@@ -13,7 +13,7 @@ const Contact = () => {
           <iframe
             title="Google Map"
             className="w-full h-full rounded-lg"
-            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAD67xxpe4hEjA10tA3d38V414Jot0M9q0&q=Colombo,Sri+Lanka"
+            src="https://www.google.com/maps/embed/v1/place?key=[your.api.key]q=Colombo,Sri+Lanka"
             allowFullScreen
             loading="lazy"
           ></iframe>
