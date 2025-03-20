@@ -64,8 +64,7 @@ prime-mobiles/
 ├── component/         # Reusable UI components
 ├── constants/         # Global constants and configuration
 ├── lib/               # Utility functions and helpers
-├── public/            # Static assets & demo images
-├── backend/           # Express.js backend
+├── public/            # Static assets & demo
 ├── .env.local         # Environment variables
 ├── package.json       # Dependencies and scripts
 ├── README.md          # Documentation
