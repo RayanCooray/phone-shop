@@ -76,7 +76,6 @@ prime-mobiles/
 ![IMG-20240711-WA0011](https://github.com/RayanCooray/phone-shop/blob/master/public/application/Screenshot%20(4254).png)
 ![IMG-20240711-WA0010](https://github.com/RayanCooray/phone-shop/blob/master/public/application/Screenshot%20(4255).png)
 ![IMG-20240711-WA0009](https://github.com/RayanCooray/phone-shop/blob/master/public/application/Screenshot%20(4256).png)
-![IMG-20240711-WA0008](https://github.com/RayanCooray/phone-shop/blob/master/public/application/Screenshot%20(4258).png)
 ![IMG-20240711-WA0007](https://github.com/RayanCooray/phone-shop/blob/master/public/application/Screenshot%20(4259).png)
 
 
